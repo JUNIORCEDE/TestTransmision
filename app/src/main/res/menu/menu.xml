@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:title="Bluetooth" android:id="@+id/selectBt">
+    </item>
+    <item android:title="Wifi" android:id="@+id/selectWifi">
+    </item>
+    <item
+        android:title="Tecnología"
+        android:id="@+id/tecnologia"
+        app:showAsAction="always"></item>
+</menu>
