@@ -16,14 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ListDevice"></activity>
-        <activity android:name=".ClientActivity" />
-        <activity android:name=".Result" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".ClientActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".Result" />
+        <activity android:name=".MainActivity">
+
         </activity>
     </application>
 
