@@ -17,14 +17,14 @@
         android:layout_marginRight="157dp"
         android:layout_marginBottom="25dp"
         android:text="Conectar"
-        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintBottom_toTopOf="@+id/btnTest"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CambioTecno"
         android:onClick="Conectar"/>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/nameDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="153dp"
@@ -33,14 +33,14 @@
         android:layout_marginEnd="153dp"
         android:layout_marginRight="153dp"
         android:layout_marginBottom="96dp"
-        android:text="Conectado Con: "
+        android:text="@string/conectado_con"
         app:layout_constraintBottom_toTopOf="@+id/CambioTecno"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/btnTest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="141dp"
@@ -50,6 +50,8 @@
         android:layout_marginRight="142dp"
         android:layout_marginBottom="181dp"
         android:text="Iniciar Testeo"
+        android:enabled="true"
+        android:onClick="IrTesteo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,7 +70,7 @@
         app:layout_constraintBottom_toTopOf="@+id/Conectar"
         app:layout_constraintEnd_toStartOf="@+id/TxtBt"
         app:layout_constraintStart_toEndOf="@+id/TxtWifi"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/nameDevice" />
 
     <TextView
         android:id="@+id/TxtWifi"
@@ -85,7 +87,7 @@
         app:layout_constraintEnd_toStartOf="@+id/CambioTecno"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/nameDevice" />
 
     <TextView
         android:id="@+id/TxtBt"
@@ -102,5 +104,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/CambioTecno"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/nameDevice" />
 </android.support.constraint.ConstraintLayout>

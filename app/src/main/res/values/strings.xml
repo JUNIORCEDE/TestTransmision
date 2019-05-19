@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Test Transmision</string>
     <string name="archivo">Archivo:</string>
+    <string name="conectado_con">Conectado Con:</string>
 </resources>

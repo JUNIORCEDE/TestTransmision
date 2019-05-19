@@ -1,5 +1,6 @@
 package com.example.testtransmision;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 0);
             }
         });
+
+
 
     }
 

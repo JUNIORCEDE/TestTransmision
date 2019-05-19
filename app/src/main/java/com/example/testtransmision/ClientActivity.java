@@ -21,20 +21,26 @@ import android.widget.Toast;
 
 import com.example.testtransmision.Broadcast.WifiDirectBroadcastReceiver;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientActivity extends AppCompatActivity {
     Switch sw;
     Boolean activado = false;
-    Button btnConectar;
-    TextView txtWifi, txtBt;
+    Button btnTesteo;
+    TextView txtWifi, txtBt,infoDevice;
 
     WifiManager wifiManager;
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
     BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
+
+    Boolean ActivarTesteo = false;
+    String nameDevice = "";
+    Bundle bundle = null;
 
 
     @Override
@@ -44,6 +50,8 @@ public class ClientActivity extends AppCompatActivity {
         sw = (Switch)findViewById(R.id.CambioTecno);
         txtWifi = (TextView)findViewById(R.id.TxtWifi);
         txtBt = (TextView)findViewById(R.id.TxtBt);
+        infoDevice = (TextView)findViewById(R.id.nameDevice);
+        btnTesteo = (Button) findViewById(R.id.btnTest);
         wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this,getMainLooper(),null);
@@ -74,6 +82,16 @@ public class ClientActivity extends AppCompatActivity {
                 else{WifiOn();}
             }
         });
+
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            ActivarTesteo = bundle.getBoolean("btnTestEnable");
+            nameDevice = bundle.getString("nameDevice");
+        }
+        Toast.makeText(this, nameDevice, Toast.LENGTH_SHORT).show();
+        infoDevice.setText(R.string.conectado_con+" "+nameDevice);
+        btnTesteo.setEnabled(ActivarTesteo);
+
     }
 
     @Override
@@ -91,7 +109,7 @@ public class ClientActivity extends AppCompatActivity {
     public void WifiOn(){
         txtBt.setTextColor(getResources().getColor(R.color.Rojo));
         txtWifi.setTextColor(getResources().getColor(R.color.Verde));
-        Toast.makeText(this, "Encendiendo Wifi Direct", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Encendiendo Wifi Direct", Toast.LENGTH_SHORT).show();
         if (!wifiManager.isWifiEnabled()){
             wifiManager.setWifiEnabled(true);
             try {
@@ -122,6 +140,11 @@ public class ClientActivity extends AppCompatActivity {
 
     public void Conectar(View v){
         Intent intent = new Intent (getApplicationContext(), ListDevice.class);
+        startActivityForResult(intent, 0);
+    }
+
+    public void IrTesteo(View v){
+        Intent intent = new Intent (getApplicationContext(), MainActivity.class);
         startActivityForResult(intent, 0);
     }
 }

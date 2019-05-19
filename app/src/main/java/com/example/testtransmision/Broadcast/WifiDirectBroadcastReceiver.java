@@ -9,15 +9,18 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.example.testtransmision.ClientActivity;
+import com.google.gson.Gson;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -38,6 +41,8 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
     WifiP2pDevice[] deviceArray;
 
     ListView Listado = null;
+
+    private Boolean activar = false , conexion = false;
 
 
 
@@ -63,7 +68,7 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        Toast.makeText(context, "OnReceive "+action, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "OnReceive "+action, Toast.LENGTH_SHORT).show();
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)){
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE,-1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED){
@@ -92,17 +97,16 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
                                 }
                             }
                             if (Listado != null) {
-                                Toast.makeText(mActivity.getApplicationContext(), "Llenando Lista", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(mActivity.getApplicationContext(), "Llenando Lista", Toast.LENGTH_SHORT).show();
                                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity.getApplicationContext(),android.R.layout.simple_list_item_1,listado);
                                 Listado.setAdapter(adapter);
                                 Listado.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        Toast.makeText(mActivity.getApplicationContext(), ""+position, Toast.LENGTH_SHORT).show();
-                                        Toast.makeText(mActivity.getApplicationContext(), ""+deviceArray[position].deviceName, Toast.LENGTH_SHORT).show();
                                         final WifiP2pDevice dispositivo = deviceArray[position];
                                         WifiP2pConfig config = new WifiP2pConfig();
                                         config.deviceAddress = dispositivo.deviceAddress;
+                                        activar = true;
                                         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
                                             @Override
                                             public void onSuccess() {
@@ -112,6 +116,7 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
                                             @Override
                                             public void onFailure(int reason) {
                                                 Toast.makeText(mActivity.getApplicationContext(), "Error al conectar con "+ dispositivo.deviceName, Toast.LENGTH_SHORT).show();
+                                                activar = false;
                                             }
                                         });
 
@@ -125,19 +130,55 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
                     }
                 });
             } else {
-                //Toast.makeText(context, "mManage null", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "mManage null", Toast.LENGTH_SHORT).show();
             }
         }
         else if(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)){
             if(mManager == null) return;
             NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-            if(networkInfo.isConnected()){
-                Toast.makeText(mActivity.getApplicationContext(), "Conectados", Toast.LENGTH_SHORT).show();
+            if(networkInfo.isConnected() && !conexion){
+                List<WifiP2pDevice> listaD = (List<WifiP2pDevice>) intent.getParcelableExtra(WifiP2pManager.EXTRA_P2P_DEVICE_LIST);
+                String json = new Gson().toJson(listaD);
+                Log.i("InfoWifi", json);
+                /*mManager.requestGroupInfo(mChannel,new WifiP2pManager.GroupInfoListener() {
+                    @Override
+                    public void onGroupInfoAvailable(WifiP2pGroup wifiP2pGroup) {
+                        Collection<WifiP2pDevice> peerList = wifiP2pGroup.getClientList();
+                        ArrayList<WifiP2pDevice> list = new ArrayList<WifiP2pDevice>(peerList);
+                        String host;
+                        for (int i = 1; i < list.size(); i++) {
+                            host = list.get(i).deviceAddress;
+                            Toast.makeText(mActivity.getApplicationContext(), ""+host, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                */
+                //Toast.makeText(mActivity.getApplicationContext(), "Conectados", Toast.LENGTH_SHORT).show();
+                mManager.requestConnectionInfo(mChannel, new WifiP2pManager.ConnectionInfoListener() {
+                    @Override
+                    public void onConnectionInfoAvailable(WifiP2pInfo info) {
+
+                        InetAddress groupOwnerAddress = info.groupOwnerAddress;
+                        if (info.groupFormed && info.isGroupOwner){
+
+                        }
+                        else{
+
+                        }
+
+                        Intent intent = new Intent(mActivity.getApplicationContext(), ClientActivity.class);
+                        intent.putExtra("nameDevice","");
+                        intent.putExtra("btnTestEnable",activar);
+                        mActivity.startActivity(intent);
+
+                    }
+                });
+                conexion = true;
             }
             else{
-                Toast.makeText(mActivity.getApplicationContext(), "No Conectados", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mActivity.getApplicationContext(), "No Conectados", Toast.LENGTH_SHORT).show();
             }
-
+            activar = false;
         }
         else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)){
 
