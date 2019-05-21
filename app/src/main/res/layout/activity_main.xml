@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
     <RelativeLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
@@ -122,7 +121,7 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/txt_cedula"
+                        android:id="@+id/nIteraciones"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

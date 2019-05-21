@@ -1,5 +1,6 @@
 package com.example.testtransmision;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.testtransmision.Broadcast.WifiDirectBroadcastReceiver;
+import com.example.testtransmision.BtConnect.BluetoothConnect;
 
 import org.w3c.dom.Text;
 
@@ -42,6 +44,7 @@ public class ClientActivity extends AppCompatActivity {
     String nameDevice = "";
     Bundle bundle = null;
 
+    BluetoothConnect bluetoothConnect = new BluetoothConnect();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,11 @@ public class ClientActivity extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         activado = sw.isChecked();
+        bundle = this.getIntent().getExtras();
+        if (bundle != null) {
+            activado = bundle.getBoolean("BtOn");
+        }
+
         if (activado){
             BTOn();
         }
@@ -74,9 +82,11 @@ public class ClientActivity extends AppCompatActivity {
             WifiOn();
         }
 
+
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                activado = isChecked;
+                if (activado){
                     BTOn();
                 }
                 else{WifiOn();}
@@ -87,7 +97,19 @@ public class ClientActivity extends AppCompatActivity {
         if (bundle != null) {
             ActivarTesteo = bundle.getBoolean("btnTestEnable");
             nameDevice = bundle.getString("nameDevice");
+            /*
+            if (!ActivarTesteo) {
+                final ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setIcon(R.mipmap.ic_launcher);
+                progressDialog.setMessage("Esperando archivos...");
+                progressDialog.show();
+            }
+            */
         }
+        if (((WifiDirectBroadcastReceiver) mReceiver).getConexion()){
+            ActivarTesteo = true;
+        }
+
         Toast.makeText(this, nameDevice, Toast.LENGTH_SHORT).show();
         infoDevice.setText(R.string.conectado_con+" "+nameDevice);
         btnTesteo.setEnabled(ActivarTesteo);
@@ -97,18 +119,25 @@ public class ClientActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(mReceiver,mIntentFilter);
+        if (!activado) {
+            registerReceiver(mReceiver, mIntentFilter);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mReceiver);
+        if (!activado) {
+            unregisterReceiver(mReceiver);
+        }
     }
 
     public void WifiOn(){
         txtBt.setTextColor(getResources().getColor(R.color.Rojo));
         txtWifi.setTextColor(getResources().getColor(R.color.Verde));
+        if (bluetoothConnect != null) {
+            bluetoothConnect.desHabilitarBluetooth();
+        }
         //Toast.makeText(this, "Encendiendo Wifi Direct", Toast.LENGTH_SHORT).show();
         if (!wifiManager.isWifiEnabled()){
             wifiManager.setWifiEnabled(true);
@@ -131,15 +160,20 @@ public class ClientActivity extends AppCompatActivity {
     }
 
     public void BTOn(){
+
         txtWifi.setTextColor(getResources().getColor(R.color.Rojo));
         txtBt.setTextColor(getResources().getColor(R.color.Verde));
         if (wifiManager.isWifiEnabled()){
             wifiManager.setWifiEnabled(false);
         }
+        if (bluetoothConnect != null) {
+            bluetoothConnect.habilitarBluetooth();
+        }
     }
 
     public void Conectar(View v){
         Intent intent = new Intent (getApplicationContext(), ListDevice.class);
+        intent.putExtra("BtOn",activado);
         startActivityForResult(intent, 0);
     }
 

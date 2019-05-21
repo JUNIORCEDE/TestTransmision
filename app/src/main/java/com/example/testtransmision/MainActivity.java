@@ -1,6 +1,7 @@
 package com.example.testtransmision;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -14,13 +15,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testtransmision.BtConnect.BluetoothConnect;
+
 import java.io.File;
 import java.io.InputStream;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     Button BtnFile, BtnInicio;
     TextView TxtFile;
+    EditText nIteraciones;
+    Integer iteraciones = 1;
+
     private final int PICKER = 10;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +37,10 @@ public class MainActivity extends AppCompatActivity {
         BtnFile = (Button)findViewById(R.id.btnFile);
         TxtFile = (TextView)findViewById(R.id.txtFile);
         BtnInicio = (Button)findViewById(R.id.btnInicio);
-
+        nIteraciones = (EditText)findViewById(R.id.nIteraciones);
+        if (!nIteraciones.getText().toString().equals("")){
+            iteraciones = Integer.parseInt(nIteraciones.getText().toString());
+        }
         BtnFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         }
         catch(android.content.ActivityNotFoundException ex){
             Toast.makeText(this, "Por favor, instale un administrador de archivos", Toast.LENGTH_SHORT).show();
-
         }
 
     }
@@ -79,5 +90,9 @@ public class MainActivity extends AppCompatActivity {
                     TxtFile.setText(FilePath);
                 }
         }
+    }
+
+    public void IniciarTesteo(View v){
+
     }
 }
